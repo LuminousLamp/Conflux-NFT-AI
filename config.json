@@ -1,0 +1,11 @@
+{
+  "main": "./contracts/GameItem.sol",
+  "deploy": "./build/contracts/GameItem.json",
+  "framework": "cfxtruffle",
+  "compilers": {
+    "solc": "0.8.0",
+    "cfxtruffle": "",
+    "evmVersion": "istanbul"
+  },
+  "npmClient": "npm"
+}

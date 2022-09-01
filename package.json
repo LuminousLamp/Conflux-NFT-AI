@@ -1,0 +1,22 @@
+{
+  "name": "erc721",
+  "version": "1.0.0",
+  "description": "This is a sample project of [OpenZeppelin contracts](https://openzeppelin.com/contracts/).",
+  "main": "truffle-config.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npx cfxtruffle compile",
+    "deploy": "npx cfxtruffle deploy"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "directories": {
+    "test": "test"
+  },
+  "devDependencies": {
+    "@openzeppelin/contracts": "^4.2.0",
+    "browserify": "^17.0.0"
+  },
+  "type":"module"
+}
