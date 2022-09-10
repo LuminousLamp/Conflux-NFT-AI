@@ -10,7 +10,7 @@ def invoke(playerAddress, tokenURI):
     # )
     # web3.cfx.default_account = account.address
 
-    with open('.//GameItem.json','r')as fp:
+    with open('GameItem.json','r')as fp:
         contract_metadata = json.load(fp)
     
     # print(contract_metadata)
@@ -22,14 +22,10 @@ def invoke(playerAddress, tokenURI):
 
     newItemId = nftContract.caller().awardItem(playerAddress, tokenURI)
     print(newItemId)
-    # balance = contract.functions.balanceOf(random_account.address).call()
-    # balance1 = contract.caller().balanceOf(random_account.address)
-    # assert balance1 == balance == 100
-    #print(newItemId)
 
-playerAddress = 'cfxtest:aathvsw97m8td0ref0fp5fkzfc0wsrzu0am1k0519x'
-tokenURI = 'https://ipfs.io/ipfs/Qmd7uVCXavzXx3sQRzigZsaAQjWa36XnZWhimBwmm7NXC5'
-invoke(playerAddress,tokenURI)
+# playerAddress = 'cfxtest:aathvsw97m8td0ref0fp5fkzfc0wsrzu0am1k0519x'
+# tokenURI = 'https://ipfs.io/ipfs/Qmd7uVCXavzXx3sQRzigZsaAQjWa36XnZWhimBwmm7NXC5'
+# invoke(playerAddress,tokenURI)
 
 # you might need to change the argument name depending on the solidity source code
 # below works if wallet middleware and default account is set 

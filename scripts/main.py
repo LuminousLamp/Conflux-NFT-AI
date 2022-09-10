@@ -6,7 +6,9 @@ import tkinter.filedialog
 import tkinter.font
 import os
 import getImage
-
+from ttkbootstrap import Style
+import invokecontract
+from PIL import Image, ImageTk
 
 class Window:
     def __init__(self):
@@ -15,51 +17,70 @@ class Window:
         self.root.geometry('800x600')
         self.root.maxsize(800,600)
         self.root.minsize(800,600)
-        
+        self.style = Style(theme='darkly')
         self.frame1 = tkinter.Frame(self.root, )
+        playerAddress = ''
+        self.tokenURI = ''
 
 
-        "2.4 2_and_4 选值框Spinbox（整型）"
-        # 下面的部分制作一个可显示2（代表歌词中的to）或4的选值框
-        # 使用选值框Spinbox控件：https://zhuanlan.zhihu.com/p/353831304
-        self.to_default = tkinter.IntVar() # 创建一个整型变量（IntVar），用于Spinbox的textvariable属性
-        self.to_default.set(4)
-        self.to_spinbox = tkinter.ttk.Spinbox(self.frame1, wrap=False, from_=2, to=4,
-                                      increment=2, textvariable=self.to_default)
-        # /////Spinbox中的wrap属性可设置True或False，若设置为true，spinbox中的值可以循环
-        # /////from_是范围的开始值（有下划线是因为避免与python的关键字冲突），to是末端值，increment是递增量
-        # /////这里使用textvariable的目的是让程序打开时控件内就有一个初始值，如果不设置，控件内初始为空
+
+        self.prompt = ''
+        self.style = '油画'    
+        self.apikey = 'AWla1UImVSbRhtNF7hE0VYv0fekwm9X2'
+        self.secretkey = '7GB8HPKoV0GvzjyTPTReFffBSu9k93yd'
 
 
-        "2.5 know_or_not 下拉栏Combobox"
-        # 下面的部分制作一个可选择 but I don't know 或 and so do I 文本的下拉栏
-        # //////下拉栏控件的使用示例：https://blog.csdn.net/xoofly/article/details/89716839
-        self.knowOrNot_variable = tkinter.StringVar()
-        self.knowOrNot_box_values = ('but I don\'t know', 'and so do I')  # 用元组（或列表）的形式给下拉栏设定值
-        self.knowOrNot_box = tkinter.ttk.Combobox(self.frame1,textvariable= self.knowOrNot_variable, values = self.knowOrNot_box_values)
-        # /////values属性设置下拉栏的属性，值为一个列表或元组
-        self.knowOrNot_box.current(0) # 设定初始值
-        # /////XXX.current()方法设置初始时下拉栏文本框内显示的内容，参数为一个整数，表示第几个值
-
-        options = ('1','2222','43534')
-        self.variable = tkinter.StringVar()
-        self.variable.set('请选择')
-        self.optionMenu1 = tkinter.OptionMenu(self.frame1, self.variable, *options)
+        options1 = ('中秋','国庆','春节')
+        self.variable1 = tkinter.StringVar()
+        self.variable1.set('选项1')
+        self.optionMenu1 = tkinter.OptionMenu(self.frame1, self.variable1, *options1)
         
-        text = ''
-        style = ''    
-        apikey = ''
-        secretkey = ''    
-        
-        
-        self.makeImage = tkinter.Button(self.frame1, text = '画画', command = lambda : getImage.getImage(text, style, apikey, secretkey))
+        options2 = ('月亮','2222','43534')
+        self.variable2 = tkinter.StringVar()
+        self.variable2.set('选项2')
+        self.optionMenu2 = tkinter.OptionMenu(self.frame1, self.variable2, *options2)
+
+        options3 = ('1','2222','43534')
+        self.variable3 = tkinter.StringVar()
+        self.variable3.set('选项3')
+        self.optionMenu3 = tkinter.OptionMenu(self.frame1, self.variable3, *options3)
+
+        options4 = ('水彩','油画','粉笔画','卡通','蜡笔画','儿童画','随机')
+        self.variable4 = tkinter.StringVar()
+        self.variable4.set('风格')
+        self.optionMenu4 = tkinter.OptionMenu(self.frame1, self.variable4, *options4)
 
 
-        self.to_spinbox.pack()
-        self.knowOrNot_box.pack()
-        self.optionMenu1.pack()
-        self.makeImage.pack()
+            
+        self.button_makeImage = tkinter.Button(self.frame1, text = '画画' ,width=8, command = lambda : self.PrepareToGetImage(self))
+        self.button_toChain = tkinter.Button(self.frame1, text='上链',width=8, command= lambda : self.ToChain(self))
+
+
+        global imgOpen
+        imgOpen = Image.open("LOGO.jpg")
+        global img_png
+        img_png = ImageTk.PhotoImage(imgOpen)
+        self.label_img = tkinter.Label(self.root, text='asd',image=img_png, width=40, height=30)
+
+
+
+        self.optionMenu1.pack(side=tkinter.LEFT, padx=5)
+        self.optionMenu2.pack(side=tkinter.LEFT, padx=5)
+        self.optionMenu3.pack(side=tkinter.LEFT, padx=5)
+        self.optionMenu4.pack(side=tkinter.LEFT, padx=5)
+        self.button_makeImage.pack()
+        self.label_img.pack()
         self.frame1.pack()
+
+    def PrepareToGetImage(self):
+        self.prompt = self.variable1.get() + self.variable2.get() + self.variable3.get()
+        self.style = self.variable4.get()
+        getImage.GetImage(self.prompt, self.style, self.apikey, self.secretkey)
+
+    def ToChain(self):
+        invokecontract(self.playerAddress,self.tokenURI)
+
+
 
 WD = Window()
 tkinter.mainloop()
