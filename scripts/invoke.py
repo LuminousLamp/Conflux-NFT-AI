@@ -10,7 +10,7 @@ def invoke(playerAddress, tokenURI):
     # )
     # web3.cfx.default_account = account.address
 
-    with open('C:/Users/LED/Desktop/nft/scripts/GameItem.json','r')as fp:
+    with open('.//GameItem.json','r')as fp:
         contract_metadata = json.load(fp)
     
     # print(contract_metadata)
@@ -20,7 +20,7 @@ def invoke(playerAddress, tokenURI):
         address=contract_metadata["receipt"]["contractCreated"]
         )
 
-    newItemId = nftContract.functions.awardItem(playerAddress, tokenURI)
+    newItemId = nftContract.caller().awardItem(playerAddress, tokenURI)
     print(newItemId)
     # balance = contract.functions.balanceOf(random_account.address).call()
     # balance1 = contract.caller().balanceOf(random_account.address)
