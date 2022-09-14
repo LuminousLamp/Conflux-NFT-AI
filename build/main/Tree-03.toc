@@ -1,0 +1,5 @@
+('c:\\users\\led\\appdata\\local\\programs\\python\\python310\\lib\\site-packages\\cfx_account-0.1.0b4-py3.10.egg',
+ None,
+ {'*.pyd', '*.cp310-win_amd64.pyd', '*.py', '*.pyw', 'EGG-INFO', '*.pyc'},
+ 'DATA',
+ [])

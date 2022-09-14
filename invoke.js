@@ -1,8 +1,13 @@
-import { Conflux } from 'js-conflux-sdk';
-import GameItem from './deploys/GameItem.json' assert {type: 'json'};
-import ERC721 from './deploys/ERC721.json' assert {type: 'json'};
-export {invoke}
-const abi = [
+// import { Conflux } from 'js-conflux-sdk';
+const Conflux = require('js-conflux-sdk')
+// import GameItem from './deploys/GameItem.json' assert {type: 'json'};
+// import ERC721 from './deploys/ERC721.json' assert {type: 'json'};
+// export {invoke}
+
+
+// const abi = GameItem.abi
+// const address = GameItem.receipt.contractCreated
+const abi =  [
     {
       "inputs": [],
       "stateMutability": "nonpayable",
@@ -385,37 +390,30 @@ const abi = [
     }
   ]
 
-
-const cfx = new Conflux({
+const address = "cfxtest:acgp8t8kawk1t7fjae92bkr2tc6w8vavzayg762z7d"
+const cfx = new Conflux.Conflux({
     url: 'http://test.confluxrpc.org',
     networkId: 1,
 });
 
 
 async function invoke(playerAddress, tokenURI){
-
+    // 建立合约
     const nftContract = cfx.Contract({
-        // abi: abi,
-        abi: GameItem.abi,
-        address: GameItem.receipt.contractCreated
-        // address:"cfxtest:acewrnf259s1tgsbxvnmse9m0mp715t87pckt13pw3"
+        abi:abi, address:address
     })
 
+    console.log('balance of me: '+nftContract.balanceOf(playerAddress));
+    console.log('name: '+nftContract.name());
+    console.log('owner of 2: '+nftContract.ownerOf(2));
+    
+    // 调用awardItem函数
     const newItemId = nftContract.awardItem(playerAddress, tokenURI);
     console.log(newItemId);
-    // function awardItem(address player, string memory tokenURI)
-//     public
-//     returns (uint256)
-//   {
-//     _tokenIds.increment();
-
-//     uint256 newItemId = _tokenIds.current();
-//     _mint(player, newItemId);
-//     _setTokenURI(newItemId, tokenURI);
 }
 
 // console.log(contractData);
 
-// const playerAddress = 'cfxtest:aathvsw97m8td0ref0fp5fkzfc0wsrzu0am1k0519x';
-// const tokenURI = 'https://ipfs.io/ipfs/Qmd7uVCXavzXx3sQRzigZsaAQjWa36XnZWhimBwmm7NXC5';
-// invoke(playerAddress, tokenURI);
+const playerAddress = 'cfxtest:aathvsw97m8td0ref0fp5fkzfc0wsrzu0am1k0519x';
+const tokenURI = 'https://ipfs.io/ipfs/Qmd7uVCXavzXx3sQRzigZsaAQjWa36XnZWhimBwmm7NXC5';
+invoke(playerAddress, tokenURI);

@@ -1,0 +1,5 @@
+('C:\\Users\\LED\\Desktop\\nft\\build\\main\\conflux_web3-1.0.0b1-py3.10.egg',
+ None,
+ {'*.pyd', '*.cp310-win_amd64.pyd', '*.py', '*.pyw', 'EGG-INFO', '*.pyc'},
+ 'DATA',
+ [])
