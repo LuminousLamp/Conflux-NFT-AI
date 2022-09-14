@@ -10,21 +10,22 @@ def invoke(playerAddress, tokenURI):
     # )
     # web3.cfx.default_account = account.address
 
-    with open('GameItem.json','r')as fp:
+    with open('..\\deploys\\GameItem.json','r')as fp:
         contract_metadata = json.load(fp)
-    
+    print('//////////////////////////执行点1/////////////////////////////')
     # print(contract_metadata)
     
     nftContract = web3.cfx.contract(
         abi=contract_metadata["abi"], 
         address=contract_metadata["receipt"]["contractCreated"]
         )
-
+    print('//////////////////////////执行点2/////////////////////////////')
     newItemId = nftContract.caller().awardItem(playerAddress, tokenURI)
+    print('//////////////////////////执行点3/////////////////////////////')
     print(newItemId)
 
 # playerAddress = 'cfxtest:aathvsw97m8td0ref0fp5fkzfc0wsrzu0am1k0519x'
-# tokenURI = 'https://ipfs.io/ipfs/Qmd7uVCXavzXx3sQRzigZsaAQjWa36XnZWhimBwmm7NXC5'
+# tokenURI = 'https://ipfs.io/ipfs/QmV1SUM2nVATy4J4qLhJP97hguQiT5iJCgvcm8B7Cgb1Kf'
 # invoke(playerAddress,tokenURI)
 
 # you might need to change the argument name depending on the solidity source code
