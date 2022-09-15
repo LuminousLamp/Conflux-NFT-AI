@@ -31,7 +31,7 @@ def GetImage(text, style, apikey, secretkey):
 
     # img_url为图片链接,
     # file_name为文件储存路径及文件名
-    file_name = '../nft/AIpic.jpg'
+    file_name = '../util/AIpic.jpg'
 
     res=requests.get(selected_image)
     with open(file_name ,'wb') as f:

@@ -15,8 +15,85 @@ import re
 import random
 import json
 
+class OptionWidget:
+    def __init__(self, window, mode:str, name:str, label_text:str, initial_value = ''):
+        self.name:str = name
+        self.mode:str = mode
+        self.option_frame = ttkbootstrap.Frame(window.frame_options)
+        self.variable = ttkbootstrap.StringVar()
+        self.variable.set(initial_value)
+        self.input = ttkbootstrap.Entry(self.option_frame, textvariable=self.variable, width=30)
+        # self.input = ttkbootstrap.ttk.Combobox(self.option_frame, bootstyle="default", width=16, state="readonly", values=combobox_parameter, textvariable=self.variable)
+        self.input.bind('<Key>', self.inputStyle2Default)
+        self.label = ttkbootstrap.Label(self.option_frame, text=label_text)
+
+    
+    def pack(self):
+        self.label.pack(anchor=ttkbootstrap.N, padx=4,pady=0)
+        self.input.pack(anchor=ttkbootstrap.N, padx=4,pady=4)
+        self.option_frame.pack(anchor=ttkbootstrap.W,side=ttkbootstrap.LEFT, padx = 4, pady=4,)
+
+    def pack_forget(self):
+        self.label.pack_forget()
+        self.input.pack_forget()
+        self.option_frame.pack_forget()
+    
+    def inputStyle2Danger(self,*a):
+        self.input.config(bootstyle='danger')
+    
+    def inputStyle2Default(self,*a):
+        self.input.config(bootstyle='default')
+    
+    def getValue(self):
+        return self.variable.get()
+    
+    def setValue(self, newvalue:str):
+        self.variable.set(newvalue)
+
+    def updateLabel(self, newlabel:str):
+        self.label.config(text=newlabel)
+
+
+class OptionWidget_C(OptionWidget):
+    def __init__(self, window, mode:str, name:str, label_text:str, combobox_parameter:list[str], initial_value = ''):
+        super().__init__(window, mode, name, label_text, initial_value)
+        self.parameter:str = combobox_parameter
+        self.input = ttkbootstrap.ttk.Combobox(self.option_frame, bootstyle="default", width=16, state="readonly", values=combobox_parameter, textvariable=self.variable)
+        self.input.bind('<<ComboboxSelected>>', self.inputStyle2Default)
+    
+    def setValue(self, newvalue:tuple[str]):
+        self.input.config(values=newvalue)
+        self.variable.set('')
+
+
+
+class Mode:
+    def __init__(self, window, name:str, style:str, index:int):
+        self.name:str = name
+        self.widgets:list[OptionWidget| OptionWidget_C] = []
+        self.style:str = style
+        self.index:int = index
+        self.radiobutton = ttkbootstrap.Radiobutton(window.frame_mode_selection, text=name, value=self.index, variable=window.mode_selection_variable, command=lambda: window.switchMode(self))
+        self.radiobutton.pack(anchor=ttkbootstrap.N, padx=4,pady=2)
+        # self.mode_selection_button_default = ttkbootstrap.Radiobutton(self.frame_mode_selection, text='一般模式', value=0, variable=self.mode_selection_variable, command=self.toDefaultMode)
+    
+    def addWidget(self, widget:OptionWidget):
+        self.widgets.append(widget)
+    
+    def addWidgets(self, widgets:list[OptionWidget]):
+        self.widgets = self.widgets + widgets
+
+    def pack(self):
+        for widget in self.widgets:
+            widget.pack()
+
+    def pack_forget(self):
+        for widget in self.widgets:
+            widget.pack_forget()
+
 
 class Window:
+
     def __init__(self):
         ###############################
         # 基础参数
@@ -25,31 +102,18 @@ class Window:
 
 
         self.provided_keys = data["provided_keys"]
-        # ({"ak":"AWla1UImVSbRhtNF7hE0VYv0fekwm9X2","sk":"7GB8HPKoV0GvzjyTPTReFffBSu9k93yd"},
-        #     {"ak":"koxjmqRUOeBvIxKHdo94aHuehbUSNdbd","sk":"VM6eMck4R25wgYG5xVxNdI91KTKIYdU4"},
-        #     {"ak":"KsWEIIQq1QhQ9iaCjKOeG3i4H9TyBDGB","sk":"gGj4GCRW0S37o649f3NIOUmZ9v8okclw"},
-        #     {"ak":"ezem375HQDvMc80rRDftOqA16fOSgtfW","sk":"49Fs8nTgcnSqPajdcpDbuSr7pA9xNIHs"},
-        #     {"ak":"E9cwReHYyOyaxuQf5qgAteo1One3h3sw","sk":"e0PePV3MMMvzBY1qOwdVofoI13yztmUo"},
-        #     {"ak":"xyCUpoaiewGuYtsWwV1jumGfrDCHFdXi","sk":"IDQnNCEgycyanLU8dRDbKuHcr9c6aCAC"})
         self.style = data["style"]
-        # ('水彩','油画','粉笔画','卡通','蜡笔画','儿童画','随机')
         self.style_selected = None
         self.advanced_style = data["advanced_style"]
-        # ('概念艺术','像素艺术','包豪斯艺术','蒸汽波艺术','故障艺术','素人主义','女巫店风格','维京人风格','矢量心风格','浮世绘风格','史前遗迹风格','立体主义风格','未来主义风格','古埃及风格','复古海报风','港风','抽象技术风格')
         self.advanced_style_adopted = None
-        self.guide_text = data["guide_text"]
-        # ('请输入你抬头看到的一件事','请输入你抬头左转看到的第一件物品','找到微信第一位好友！请TA提供一个元素','最近一顿吃了什么？','恭喜你获得一次传送机会！你想去……')
+        self.guide_text:str = data["guide_text"]
         self.guide_text_selected = None
         self.riddle = data["riddle"]
-        # ('春色满园十五夜','十五月亮照海滩','大鹏展翅腾九霄')
-
 
         self.prompt = None
         self.wenxinAK_text = None
         self.wenxinSK_text = None
         self.confluxSK_text = None
-
-
         #'cfxtest:aathvsw97m8td0ref0fp5fkzfc0wsrzu0am1k0519x'
 
         ###############################
@@ -75,60 +139,16 @@ class Window:
 
         ###############################
         # 选项框
-
         self.frame_options = ttkbootstrap.LabelFrame(self.frame_root, text='绘图选项', bootstyle='primary')
 
-        # 选项1：默认/中秋
+        # 主选项：选择模式
         self.frame_mode_selection = ttkbootstrap.Frame(self.frame_options,)
-
         self.mode_selection_variable = ttkbootstrap.IntVar()
         self.mode_selection_dict = {0: 'default', 1: 'midautumn', 2:'diary'}
         self.mode_selection_variable.set(0)
-        self.mode_selection_button_default = ttkbootstrap.Radiobutton(self.frame_mode_selection, text='一般模式', value=0, variable=self.mode_selection_variable, command=self.toDefaultMode)
-        self.mode_selection_button_midautumn = ttkbootstrap.Radiobutton(self.frame_mode_selection, text='中秋专栏', value=1, variable=self.mode_selection_variable, command=self.toMidAutumnMode)
-        self.mode_selection_button_diary = ttkbootstrap.Radiobutton(self.frame_mode_selection, text='心情日记', value=2, variable=self.mode_selection_variable, command=self.toDiaryMode)
-        # self.mode_selection_label = ttkbootstrap.Label(self.frame_mode_selection, text='选择模式')
 
         self.vertical_line = ttkbootstrap.ttk.Separator(self.frame_options, orient=ttkbootstrap.VERTICAL)
 
-        # 风格选择
-        self.frame_style = ttkbootstrap.Frame(self.frame_options,)
-
-        self.style_variable = ttkbootstrap.StringVar()
-        self.style_variable.set('')
-        self.style_combobox = ttkbootstrap.ttk.Combobox(self.frame_style, bootstyle="default", width=18)
-        self.style_combobox.config(state='readonly', values=self.style, textvariable=self.style_variable)
-        self.style_combobox.bind('<<ComboboxSelected>>', self.styleCombobox_off)
-        self.style_label = ttkbootstrap.Label(self.frame_style, text='风格')
-
-        # 进阶风格
-        self.frame_advanced_style = ttkbootstrap.Frame(self.frame_options,)
-
-        self.advanced_style_variable = ttkbootstrap.StringVar()
-        self.advanced_style_variable.set('')
-        self.advanced_style_combobox = ttkbootstrap.ttk.Combobox(self.frame_advanced_style, bootstyle="default", width=18)
-        self.advanced_style_combobox.config(state='readonly', values=self.advanced_style_adopted, textvariable=self.advanced_style_variable)
-        self.advanced_style_combobox.bind('<<ComboboxSelected>>', self.advancedStyleCombobox_off)
-        self.advanced_style_label = ttkbootstrap.Label(self.frame_advanced_style, text='进阶风格')
-
-        # （默认模式）自由输入
-        self.frame_free_input = ttkbootstrap.Frame(self.frame_options,)
-
-        self.free_input_variable = ttkbootstrap.StringVar()
-        self.free_input_entry = ttkbootstrap.Entry(self.frame_free_input, textvariable=self.free_input_variable, width=30)
-        self.free_input_label = ttkbootstrap.Label(self.frame_free_input, text=self.guide_text_selected)
-        self.free_input_entry.bind('<Key>', self.freeInputEntry_off)
-
-        # （中秋模式）谜语
-        self.frame_riddle = ttkbootstrap.Frame(self.frame_options,)
-        self.riddle_variable = ttkbootstrap.StringVar()
-        self.riddle_variable.set('')
-        self.riddle_combobox = ttkbootstrap.ttk.Combobox(self.frame_riddle, bootstyle="default")
-        self.riddle_combobox.config(state='readonly', values=self.riddle, textvariable=self.riddle_variable, width=28)
-        self.advanced_style_combobox.bind('<<ComboboxSelected>>', self.riddleCombobox_off)
-        self.riddle_label = ttkbootstrap.Label(self.frame_riddle, text='选一个灯谜！')
-
-        self.frame_diary_1 = ttkbootstrap.Frame(self.frame_options,)
         
         ###################################
         # 图片生成框
@@ -172,22 +192,8 @@ class Window:
         self.frame_top.pack(side=ttkbootstrap.TOP, anchor=ttkbootstrap.N, fill = ttkbootstrap.X,padx = 5, pady=5)
 
         "参数选择框"
-        # self.mode_selection_label.pack(anchor=ttkbootstrap.N, padx=4,pady=2)
-        self.mode_selection_button_default.pack(anchor=ttkbootstrap.N, padx=4,pady=2)
-        self.mode_selection_button_midautumn.pack(anchor=ttkbootstrap.N, padx=4,pady=2)
         self.frame_mode_selection.pack(side=ttkbootstrap.LEFT, fill = ttkbootstrap.Y, padx = 4, pady=4, expand=True)
-
         self.vertical_line.pack(anchor=ttkbootstrap.W,side=ttkbootstrap.LEFT, padx = 4, pady=4,)
-
-        self.style_label.pack(anchor=ttkbootstrap.N, padx=4,pady=0)
-        self.style_combobox.pack(anchor=ttkbootstrap.N, padx=4,pady=4)
-        self.frame_style.pack(anchor=ttkbootstrap.W,side=ttkbootstrap.LEFT, padx = 4, pady=4,)
-
-        self.advanced_style_label.pack(anchor=ttkbootstrap.N, padx=4,pady=0)
-        self.advanced_style_combobox.pack(anchor=ttkbootstrap.N, padx=4,pady=4)
-        self.frame_advanced_style.pack(anchor=ttkbootstrap.W,side=ttkbootstrap.LEFT, padx = 4, pady=4,)
-
-        self.showDefaultMode()
         self.frame_options.pack(side=ttkbootstrap.TOP, anchor=ttkbootstrap.N, fill = ttkbootstrap.X, padx = 5, pady=5, )
 
         "图片生成框"
@@ -215,51 +221,52 @@ class Window:
         ###################################
         # 事件绑定
         self.root.protocol('WM_DELETE_WINDOW',self.quitRootWindow)
-        self.updateParameters()
 
-    
-    #############################################
-    # 切换模式
+        ##############################
+        # 控件相关
+        self.mode_autumn = Mode(self,'autumn','united',1)
+        self.mode_default = Mode(self,'default','lumen',0)
+        # self.mode_diary = Mode('diary', 'lumen')
+        self.mode_list = [self.mode_autumn,self.mode_default]
+        self.mode_now = None
 
-    def toDefaultMode(self):
-
-        self.window_style = Style(theme='lumen')
-        self.hideAutumnMode()
-        self.showDefaultMode()
-        self.updateParameters()
-
-    def toMidAutumnMode(self):
-        self.window_style = Style(theme='united')
-        self.hideDefaultMode()
-        self.showAutumnMode()
-        self.updateParameters()
-    
-    def toDiaryMode(self):
-        pass
-
-    def hideAutumnMode(self):
-        self.riddle_combobox.pack_forget()
-        self.riddle_label.pack_forget()
-        self.frame_riddle.pack_forget()
-
-    def hideDefaultMode(self):
-        self.free_input_label.pack_forget()
-        self.free_input_entry.pack_forget()
-        self.frame_free_input.pack_forget()
-
-    def showDefaultMode(self):
-        self.free_input_label.pack(anchor=ttkbootstrap.N, padx=4,pady=0)
-        self.free_input_entry.pack(anchor=ttkbootstrap.N, padx=4,pady=4)
-        self.frame_free_input.pack(anchor=ttkbootstrap.W,side=ttkbootstrap.LEFT, padx = 4, pady=4,)
+        self.w_style = OptionWidget_C(self, 'global', 'style', '风格', self.style,'')
+        self.w_advancedstyle = OptionWidget_C(self, 'global', 'advancedstyle', '进阶风格', self.advanced_style_adopted)
+        self.w_guidedinput = OptionWidget(self, 'default', 'guidedinput', self.guide_text_selected)
+        self.w_riddle = OptionWidget_C(self, 'autumn', 'riddle', '选一个灯谜！' , self.riddle)
         
-    def showAutumnMode(self):
-        self.riddle_label.pack(anchor=ttkbootstrap.N, padx=4,pady=0)
-        self.riddle_combobox.pack(anchor=ttkbootstrap.N, padx=4,pady=4)
-        self.frame_riddle.pack(anchor=ttkbootstrap.W,side=ttkbootstrap.LEFT, padx = 4, pady=4,)
+        self.mode_default.addWidgets([self.w_style, self.w_advancedstyle, self.w_guidedinput])
+        self.mode_autumn.addWidgets([self.w_style, self.w_advancedstyle, self.w_riddle])
+
+        self.switchMode(self.selectModeByName('default'))
+        self.updateParameters()
+
+
+
+    def switchMode(self, mode: Mode):
+        if self.mode_now!= mode:
+            rest = [x for x in self.mode_list if x.name != mode.name]
+
+            for i in rest:
+                i.pack_forget()
+            mode.pack()
+            self.updateParameters()
+            self.mode_now = mode
+            self.window_style = Style(theme=mode.style)
+            self.root.update()
+
+    def selectModeByIndex(self, index:int):
+        selected = [x for x in self.mode_list if x.index == index][0]
+        return selected
+
+    def selectModeByName(self, name:str):
+        selected = [x for x in self.mode_list if x.name == name][0]
+        return selected
+
         
 
     ##############################################
-    # 选择相关
+    # 更新参数相关
     def updateParameters(self):
         self.selectAdvancedStyle()
         self.selectGuideText()
@@ -268,12 +275,12 @@ class Window:
     def selectAdvancedStyle(self):
         number = random.randint(4,6)
         self.advanced_style_adopted = ('无',) + tuple(random.sample(self.advanced_style, number))
-        self.advanced_style_combobox.config(values=self.advanced_style_adopted)
-        self.advanced_style_variable.set('')
+        self.w_advancedstyle.setValue(self.advanced_style_adopted)
 
     def selectGuideText(self):
         self.guide_text_selected = random.choice(self.guide_text)
-        self.free_input_label.config(text=self.guide_text_selected)
+        self.w_guidedinput.updateLabel(self.guide_text_selected)
+
     
     def selectAKSK(self):
         selected_pair = random.choice(self.provided_keys)
@@ -395,6 +402,25 @@ class Window:
     ##############################################
     # 图片生成相关
 
+    def generatePrompt(self):
+        mode = self.mode_now
+        for widget in self.mode_now.widgets:
+            if widget is OptionWidget_C:
+                if widget.getValue() not in widget.paramater:
+                    widget.input.config(bootstyle='danger')
+                    self.hint_label.config(text='请填写完整参数！', bootstyle='danger')
+                    return
+            else:
+                if widget.getValue() == '':
+                    widget.input.config(bootstyle='danger')
+                    self.hint_label.config(text='请填写完整参数！', bootstyle='danger')
+                    return
+        
+        selected_widgets = [widget for widget in self.mode_now.widgets if widget.name != '风格']
+        keywordtuple = tuple(w.getValue() for w in selected_widgets)
+        prompt = "，".join(keywordtuple)
+        return prompt
+
     # 打开api链接
     def openUrl(event,a):
         webbrowser.open("https://wenxin.baidu.com/moduleApi/key", new=0)
@@ -402,32 +428,9 @@ class Window:
     # 点击“生成”按钮之后的操作
     def onGenerateImage(self):
 
-        mode = self.mode_selection_dict[self.mode_selection_variable.get()]
-
-        # 检查通用参数正确性
-        if self.style_variable.get() not in self.style or self.style_variable.get()=='':
-            self.style_combobox.config(bootstyle="danger")
-            self.hint_label.config(text='请填写完整参数！', bootstyle='danger')
+        prompt = self.generatePrompt()
+        if prompt == None:
             return
-        if self.advanced_style_variable.get() not in self.advanced_style_adopted or self.advanced_style_variable.get()=='':
-            self.advanced_style_combobox.config(bootstyle="danger")
-            self.hint_label.config(text='请填写完整参数！', bootstyle='danger')
-            return
-
-        # 检查特定参数正确性 + 获取参数
-        if mode == 'default':
-            if self.free_input_variable.get()=='':
-                self.free_input_entry.config(bootstyle="danger")
-                self.hint_label.config(text='请填写完整参数！', bootstyle='danger')
-                return
-            self.prompt = self.free_input_entry.get() +"， "+ self.advanced_style_variable.get()
-        
-        elif mode == 'midautumn':
-            if self.riddle_variable.get() not in self.riddle or self.riddle_variable.get()=='':
-                self.riddle_combobox.config(bootstyle="danger")
-                self.hint_label.config(text='请填写完整参数！', bootstyle='danger')
-                return
-            self.prompt = self.riddle_variable.get() +"， "+ self.advanced_style_variable.get()
 
         # 检查key参数
         if self.wenxinAK_variable.get() == '':
@@ -440,7 +443,7 @@ class Window:
             return
 
         # 获取几个参数
-        self.style_selected = self.style_variable.get()
+        self.style_selected = self.w_style.getValue()
         self.wenxinAK_text = self.wenxinAK_variable.get()
         self.wenxinSK_text = self.wenxinSK_variable.get()
         
@@ -454,7 +457,7 @@ class Window:
         self.button_makeImage.config(state=ttkbootstrap.DISABLED)
 
         # 调用函数
-        self.imageURL = getImage.GetImage(self.prompt, self.style_selected, self.wenxinAK_text, self.wenxinSK_text)
+        self.imageURL = getImage.GetImage(prompt, self.style_selected, self.wenxinAK_text, self.wenxinSK_text)
 
         # 错误处理
         if self.imageURL == 'APIError':
@@ -466,15 +469,6 @@ class Window:
         elif self.imageURL == 'error':
             self.hint_label.config(text='生成图片出错。', bootstyle='danger')
             return
-
-        # imageURL = imageURL + '.jpg'
-        # image_bytes=requests.get(imageURL).content
-        # print('imageURL: ', imageURL)
-        # image_bytes = urllib.request.urlopen(imageURL).read()
-        # print('imageURL: ', imageURL)
-
-        # data_stream = io.BytesIO(image_bytes)
-        # print("datastream: ", data_stream)
 
         # getImage完成，打开图片
         global imgOpen2
@@ -541,6 +535,7 @@ imgOpen = None
 img_png = None
 imgOpen2 = None
 img_png2 = None
+
 
 if __name__ == "__main__":
     WD = Window()
