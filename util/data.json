@@ -1,0 +1,18 @@
+{
+    "provided_keys" : [{"ak":"AWla1UImVSbRhtNF7hE0VYv0fekwm9X2","sk":"7GB8HPKoV0GvzjyTPTReFffBSu9k93yd"},
+    {"ak":"koxjmqRUOeBvIxKHdo94aHuehbUSNdbd","sk":"VM6eMck4R25wgYG5xVxNdI91KTKIYdU4"},
+    {"ak":"KsWEIIQq1QhQ9iaCjKOeG3i4H9TyBDGB","sk":"gGj4GCRW0S37o649f3NIOUmZ9v8okclw"},
+    {"ak":"ezem375HQDvMc80rRDftOqA16fOSgtfW","sk":"49Fs8nTgcnSqPajdcpDbuSr7pA9xNIHs"},
+    {"ak":"E9cwReHYyOyaxuQf5qgAteo1One3h3sw","sk":"e0PePV3MMMvzBY1qOwdVofoI13yztmUo"},
+    {"ak":"xyCUpoaiewGuYtsWwV1jumGfrDCHFdXi","sk":"IDQnNCEgycyanLU8dRDbKuHcr9c6aCAC"}],
+
+    "style": ["水彩","油画","粉笔画","卡通","蜡笔画","儿童画","随机"],
+
+    "advanced_style":["概念艺术","像素艺术","包豪斯艺术","蒸汽波艺术","故障艺术","素人主义","女巫店风格","维京人风格","矢量心风格","浮世绘风格","史前遗迹风格","立体主义风格","未来主义风格","古埃及风格","复古海报风","港风","抽象技术风格"],
+
+    "guide_text": ["请输入你抬头看到的一件事","请输入你抬头左转看到的第一件物品","找到微信第一位好友！请TA提供一个元素","最近一顿吃了什么？","恭喜你获得一次传送机会！你想去……"],
+
+    "riddle": ["春色满园十五夜","十五月亮照海滩","大鹏展翅腾九霄"]
+
+
+}

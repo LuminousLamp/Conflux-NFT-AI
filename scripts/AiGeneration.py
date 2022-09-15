@@ -13,25 +13,35 @@ import threading
 import webbrowser
 import re
 import random
+import json
 
 
 class Window:
     def __init__(self):
         ###############################
         # 基础参数
-        self.provided_keys = ({"ak":"AWla1UImVSbRhtNF7hE0VYv0fekwm9X2","sk":"7GB8HPKoV0GvzjyTPTReFffBSu9k93yd"},
-            {"ak":"koxjmqRUOeBvIxKHdo94aHuehbUSNdbd","sk":"VM6eMck4R25wgYG5xVxNdI91KTKIYdU4"},
-            {"ak":"KsWEIIQq1QhQ9iaCjKOeG3i4H9TyBDGB","sk":"gGj4GCRW0S37o649f3NIOUmZ9v8okclw"},
-            {"ak":"ezem375HQDvMc80rRDftOqA16fOSgtfW","sk":"49Fs8nTgcnSqPajdcpDbuSr7pA9xNIHs"},
-            {"ak":"E9cwReHYyOyaxuQf5qgAteo1One3h3sw","sk":"e0PePV3MMMvzBY1qOwdVofoI13yztmUo"},
-            {"ak":"xyCUpoaiewGuYtsWwV1jumGfrDCHFdXi","sk":"IDQnNCEgycyanLU8dRDbKuHcr9c6aCAC"})
-        self.style = ('水彩','油画','粉笔画','卡通','蜡笔画','儿童画','随机')
+        with open('..\\util\\data.json','r',encoding='utf-8')as fp:
+            data = json.load(fp)
+
+
+        self.provided_keys = data["provided_keys"]
+        # ({"ak":"AWla1UImVSbRhtNF7hE0VYv0fekwm9X2","sk":"7GB8HPKoV0GvzjyTPTReFffBSu9k93yd"},
+        #     {"ak":"koxjmqRUOeBvIxKHdo94aHuehbUSNdbd","sk":"VM6eMck4R25wgYG5xVxNdI91KTKIYdU4"},
+        #     {"ak":"KsWEIIQq1QhQ9iaCjKOeG3i4H9TyBDGB","sk":"gGj4GCRW0S37o649f3NIOUmZ9v8okclw"},
+        #     {"ak":"ezem375HQDvMc80rRDftOqA16fOSgtfW","sk":"49Fs8nTgcnSqPajdcpDbuSr7pA9xNIHs"},
+        #     {"ak":"E9cwReHYyOyaxuQf5qgAteo1One3h3sw","sk":"e0PePV3MMMvzBY1qOwdVofoI13yztmUo"},
+        #     {"ak":"xyCUpoaiewGuYtsWwV1jumGfrDCHFdXi","sk":"IDQnNCEgycyanLU8dRDbKuHcr9c6aCAC"})
+        self.style = data["style"]
+        # ('水彩','油画','粉笔画','卡通','蜡笔画','儿童画','随机')
         self.style_selected = None
-        self.advanced_style = ('概念艺术','像素艺术','包豪斯艺术','蒸汽波艺术','故障艺术','素人主义','女巫店风格','维京人风格','矢量心风格','浮世绘风格','史前遗迹风格','立体主义风格','未来主义风格','古埃及风格','复古海报风','港风','抽象技术风格')
+        self.advanced_style = data["advanced_style"]
+        # ('概念艺术','像素艺术','包豪斯艺术','蒸汽波艺术','故障艺术','素人主义','女巫店风格','维京人风格','矢量心风格','浮世绘风格','史前遗迹风格','立体主义风格','未来主义风格','古埃及风格','复古海报风','港风','抽象技术风格')
         self.advanced_style_adopted = None
-        self.guide_text = ('请输入你抬头看到的一件事','请输入你抬头左转看到的第一件物品','找到微信第一位好友！请TA提供一个元素','最近一顿吃了什么？','恭喜你获得一次传送机会！你想去……')
+        self.guide_text = data["guide_text"]
+        # ('请输入你抬头看到的一件事','请输入你抬头左转看到的第一件物品','找到微信第一位好友！请TA提供一个元素','最近一顿吃了什么？','恭喜你获得一次传送机会！你想去……')
         self.guide_text_selected = None
-        self.riddle = ('春色满园十五夜','十五月亮照海滩','大鹏展翅腾九霄')
+        self.riddle = data["riddle"]
+        # ('春色满园十五夜','十五月亮照海滩','大鹏展翅腾九霄')
 
 
         self.prompt = None
@@ -72,11 +82,12 @@ class Window:
         self.frame_mode_selection = ttkbootstrap.Frame(self.frame_options,)
 
         self.mode_selection_variable = ttkbootstrap.IntVar()
-        self.mode_selection_dict = {0: 'default', 1: 'midautumn'}
+        self.mode_selection_dict = {0: 'default', 1: 'midautumn', 2:'diary'}
         self.mode_selection_variable.set(0)
         self.mode_selection_button_default = ttkbootstrap.Radiobutton(self.frame_mode_selection, text='一般模式', value=0, variable=self.mode_selection_variable, command=self.toDefaultMode)
         self.mode_selection_button_midautumn = ttkbootstrap.Radiobutton(self.frame_mode_selection, text='中秋专栏', value=1, variable=self.mode_selection_variable, command=self.toMidAutumnMode)
-        self.mode_selection_label = ttkbootstrap.Label(self.frame_mode_selection, text='选择模式')
+        self.mode_selection_button_diary = ttkbootstrap.Radiobutton(self.frame_mode_selection, text='心情日记', value=2, variable=self.mode_selection_variable, command=self.toDiaryMode)
+        # self.mode_selection_label = ttkbootstrap.Label(self.frame_mode_selection, text='选择模式')
 
         self.vertical_line = ttkbootstrap.ttk.Separator(self.frame_options, orient=ttkbootstrap.VERTICAL)
 
@@ -84,7 +95,7 @@ class Window:
         self.frame_style = ttkbootstrap.Frame(self.frame_options,)
 
         self.style_variable = ttkbootstrap.StringVar()
-        self.style_variable.set('-')
+        self.style_variable.set('')
         self.style_combobox = ttkbootstrap.ttk.Combobox(self.frame_style, bootstyle="default", width=18)
         self.style_combobox.config(state='readonly', values=self.style, textvariable=self.style_variable)
         self.style_combobox.bind('<<ComboboxSelected>>', self.styleCombobox_off)
@@ -94,7 +105,7 @@ class Window:
         self.frame_advanced_style = ttkbootstrap.Frame(self.frame_options,)
 
         self.advanced_style_variable = ttkbootstrap.StringVar()
-        self.advanced_style_variable.set('-')
+        self.advanced_style_variable.set('')
         self.advanced_style_combobox = ttkbootstrap.ttk.Combobox(self.frame_advanced_style, bootstyle="default", width=18)
         self.advanced_style_combobox.config(state='readonly', values=self.advanced_style_adopted, textvariable=self.advanced_style_variable)
         self.advanced_style_combobox.bind('<<ComboboxSelected>>', self.advancedStyleCombobox_off)
@@ -111,11 +122,13 @@ class Window:
         # （中秋模式）谜语
         self.frame_riddle = ttkbootstrap.Frame(self.frame_options,)
         self.riddle_variable = ttkbootstrap.StringVar()
-        self.riddle_variable.set('-')
+        self.riddle_variable.set('')
         self.riddle_combobox = ttkbootstrap.ttk.Combobox(self.frame_riddle, bootstyle="default")
         self.riddle_combobox.config(state='readonly', values=self.riddle, textvariable=self.riddle_variable, width=28)
         self.advanced_style_combobox.bind('<<ComboboxSelected>>', self.riddleCombobox_off)
         self.riddle_label = ttkbootstrap.Label(self.frame_riddle, text='选一个灯谜！')
+
+        self.frame_diary_1 = ttkbootstrap.Frame(self.frame_options,)
         
         ###################################
         # 图片生成框
@@ -146,8 +159,9 @@ class Window:
 
         #######################################
         # 分享框
-        self.frame_share = ttkbootstrap.LabelFrame(self.frame_generate_and_share, text='分享', bootstyle='primary')
+        self.frame_share = ttkbootstrap.LabelFrame(self.frame_generate_and_share, text='上链', bootstyle='primary')
         self.button_share = ttkbootstrap.Button(self.frame_share, text='分享',width=12, command= self.toChain, state = ttkbootstrap.DISABLED)
+        self.feedback_label = ttkbootstrap.Label(self.frame_share, text='请先登录', bootstyle='secondary')
 
         ###################################
         # 打包
@@ -158,7 +172,7 @@ class Window:
         self.frame_top.pack(side=ttkbootstrap.TOP, anchor=ttkbootstrap.N, fill = ttkbootstrap.X,padx = 5, pady=5)
 
         "参数选择框"
-        self.mode_selection_label.pack(anchor=ttkbootstrap.N, padx=4,pady=2)
+        # self.mode_selection_label.pack(anchor=ttkbootstrap.N, padx=4,pady=2)
         self.mode_selection_button_default.pack(anchor=ttkbootstrap.N, padx=4,pady=2)
         self.mode_selection_button_midautumn.pack(anchor=ttkbootstrap.N, padx=4,pady=2)
         self.frame_mode_selection.pack(side=ttkbootstrap.LEFT, fill = ttkbootstrap.Y, padx = 4, pady=4, expand=True)
@@ -186,8 +200,10 @@ class Window:
         self.frame_generate.pack(side=ttkbootstrap.TOP, anchor=ttkbootstrap.N,  padx = 5, pady=5, ipady = 10, fill=tkinter.X)
 
         "分享框"
-        self.button_share.pack(anchor=ttkbootstrap.CENTER, padx=80, pady = 20)
+        self.button_share.pack(anchor=ttkbootstrap.CENTER, padx=80, pady = 5)
+        self.feedback_label.pack(anchor=ttkbootstrap.CENTER, padx=80, pady = 0)
         self.frame_share.pack(side=ttkbootstrap.TOP, anchor=ttkbootstrap.CENTER,  padx = 5, pady=5, ipady = 10)
+
         self.frame_generate_and_share.pack(side=ttkbootstrap.LEFT, anchor=ttkbootstrap.NW)
 
         "图片框"
@@ -217,6 +233,9 @@ class Window:
         self.hideDefaultMode()
         self.showAutumnMode()
         self.updateParameters()
+    
+    def toDiaryMode(self):
+        pass
 
     def hideAutumnMode(self):
         self.riddle_combobox.pack_forget()
@@ -238,7 +257,6 @@ class Window:
         self.riddle_combobox.pack(anchor=ttkbootstrap.N, padx=4,pady=4)
         self.frame_riddle.pack(anchor=ttkbootstrap.W,side=ttkbootstrap.LEFT, padx = 4, pady=4,)
         
-        
 
     ##############################################
     # 选择相关
@@ -251,6 +269,7 @@ class Window:
         number = random.randint(4,6)
         self.advanced_style_adopted = ('无',) + tuple(random.sample(self.advanced_style, number))
         self.advanced_style_combobox.config(values=self.advanced_style_adopted)
+        self.advanced_style_variable.set('')
 
     def selectGuideText(self):
         self.guide_text_selected = random.choice(self.guide_text)
@@ -263,6 +282,9 @@ class Window:
         self.wenxinAK_variable.set(self.wenxinAK_text)
         self.wenxinSK_variable.set(self.wenxinSK_text)
 
+
+    ##############################################
+    # 关于页面相关
 
     def onAbout(self):
         self.root.attributes("-disabled", 1)
@@ -284,8 +306,6 @@ class Window:
         self.about_label.pack(padx=5,pady=4)
         self.frame_about_window.pack(padx=5,pady=4)
 
-
-
         self.about_window.protocol('WM_DELETE_WINDOW',self.quitAboutWindow)
         
 
@@ -293,6 +313,7 @@ class Window:
         self.root.attributes("-disabled", 0)
         self.about_window.destroy()
     
+
     ##############################################
     # 登入相关
 
@@ -327,6 +348,7 @@ class Window:
 
     # 确认登录
     def confirmLogin(self):
+        # 错误检查
         self.confluxSK_text = self.confluxSK_variable.get()
         if self.confluxSK_variable.get()== '':
             self.login_label.config(text='请输入密钥', bootstyle='danger')
@@ -338,9 +360,20 @@ class Window:
             self.login_entry.config( bootstyle='danger')
             return
 
+        # UI响应
         self.login_label.config(text='登录成功', bootstyle='success')
         self.userinfo_variable.set('用户：'+self.confluxSK_text[0:6]+'...'+self.confluxSK_text[-4:])
-        self.userinfo_label.pack(side=ttkbootstrap.LEFT,anchor=ttkbootstrap.SE, pady=4)
+        
+        self.userinfo_label.pack(side=ttkbootstrap.LEFT,anchor=ttkbootstrap.SW, pady=4)
+        self.button_about.pack(side=ttkbootstrap.LEFT,anchor=ttkbootstrap.E, padx=4,pady=5)
+        self.button_about.pack_forget()
+
+        if os.path.exists('..\\util\\AIpic.jpg'):
+            self.feedback_label.config(text='点击上链！',bootstyle='default')
+            self.button_share.config(state=ttkbootstrap.NORMAL)
+        else:
+            self.feedback_label.config(text='先创造一张作品吧！')
+        
         self.button_login.pack_forget()
         self.root.attributes("-disabled", 0)
         self.login_window.destroy()
@@ -417,6 +450,8 @@ class Window:
         self.progress_bar.pack(anchor=ttkbootstrap.CENTER, fill=ttkbootstrap.X, padx = 30,pady=4)
         self.progress_bar.start()
         self.hint_label.config(text='图片生成中...', bootstyle='default')
+        self.button_share.config(state=ttkbootstrap.DISABLED)
+        self.button_makeImage.config(state=ttkbootstrap.DISABLED)
 
         # 调用函数
         self.imageURL = getImage.GetImage(self.prompt, self.style_selected, self.wenxinAK_text, self.wenxinSK_text)
@@ -442,9 +477,8 @@ class Window:
         # print("datastream: ", data_stream)
 
         # getImage完成，打开图片
-        self.button_share.config(state='normal')
         global imgOpen2
-        imgOpen2 = Image.open("..\\nft\\AIpic.jpg")
+        imgOpen2 = Image.open("..\\util\\AIpic.jpg")
         imgOpen2 = imgOpen2.resize((400,300))
         global img_png2
         img_png2 = ImageTk.PhotoImage(imgOpen2)
@@ -455,22 +489,29 @@ class Window:
         self.hint_label.pack_forget()
         self.progress_bar.pack_forget()
         self.image.pack(anchor = ttkbootstrap.CENTER, padx = 15,pady=4) 
+        self.button_makeImage.config(state=ttkbootstrap.NORMAL)
+        if self.confluxSK_text != None:
+            self.feedback_label.config(text='点击上链！',bootstyle='default')
+            self.button_share.config(state=ttkbootstrap.NORMAL)
+        
         self.root.update()
         self.updateParameters()
 
     # 打开多线程
     def start_thread(self):
     	# 使self.do_something函数在子线程中运行
-        insert_data = threading.Thread(target=self.onGenerateImage, args=())
+        insert_data = threading.Thread(target=self.onGenerateImage, args=(), daemon=True)
         insert_data.start()
     
 
     ##############################################
     # 上链
     def toChain(self):
-        #执行成功后给反馈
-        # self.confluxSecretKey = self.inputConfluxSK_variable.get()
-        result = invokecontract.invoke(self.confluxSK_text, self.imageURL)
+        try:
+            result = invokecontract.invoke(self.confluxSK_text, self.imageURL)
+            self.feedback_label.config(text='执行成功！',bootstyle='primary')
+        except:
+            self.feedback_label.config(text='执行失败',bootstyle='danger')
 
 
 
@@ -489,7 +530,7 @@ class Window:
     def quitRootWindow(self):
         # 删除文件
         try:
-            os.remove('..\\nft\\AIpic.jpg')
+            os.remove('..\\util\\AIpic.jpg')
         except:
             pass
         self.root.quit()
