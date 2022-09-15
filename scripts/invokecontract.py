@@ -6,19 +6,16 @@ from conflux_web3 import Web3
 def invoke(playerAddress, tokenURI):
 
     web3 = Web3(Web3.HTTPProvider("https://test.confluxrpc.com"))
-    # web3.wallet.add_account(
-    #     account := web3.account.from_key(os.environ.get("TESTNET_SECRET"))
-    # )
-    # web3.cfx.default_account = account.address
 
+    # with open('..\\build\\contracts\\GameItem.json','r') as fp:
     with open('..\\deploys\\GameItem.json','r')as fp:
         contract_metadata = json.load(fp)
-    # print(contract_metadata)
-    
+
     nftContract = web3.cfx.contract(
         abi=contract_metadata["abi"], 
         address=contract_metadata["receipt"]["contractCreated"]
         )
+    random_account = web3.account.create()
     newItemId = nftContract.caller().awardItem(playerAddress, tokenURI)
     print(newItemId)
 
@@ -62,37 +59,4 @@ def invoke(playerAddress, tokenURI):
 # logs = web3.cfx.get_logs(fromEpoch=fromEpoch, address=contract_address)
 # print("raw logs: ")
 # print(logs)
-# print()
-    
-# use contract event to process logs
-# processed_logs = contract.events.Transfer.process_receipt(transfer_receipt)
-# processed_log = processed_logs[0]
-# assert processed_log["args"]["from"] == web3.cfx.default_account
-# assert processed_log["args"]["to"] == random_account.address
-# assert processed_log["args"]["value"] == 100
-# # for log in transaction["logs"], field "logIndex" and "transactionIndex" are not included
-# print("processed log: (no logIndex)")
-# print(processed_log)
-# print()
-
-# generate topics to use getLogs
-# filter_topics = contract.events.Transfer.get_filter_topics(
-#     value=100,
-#     to=random_account.address
-# )
-# new_logs = web3.cfx.get_logs(fromEpoch=fromEpoch, topics=filter_topics)
-# print("logs filter by topics:")
-# print(new_logs)
-# print()
-
-# # event get_logs will return processed logs
-# new_processed_logs = contract.events.Transfer.get_logs(
-#     argument_filters={
-#         "value": 100,
-#         "to": random_account.address
-#     },
-#     fromEpoch=fromEpoch
-# )
-# print("processed logs from contract event get_logs")
-# print(new_processed_logs)
 # print()
