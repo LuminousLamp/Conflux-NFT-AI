@@ -1,0 +1,5 @@
+('c:\\users\\led\\appdata\\local\\programs\\python\\python310\\lib\\site-packages\\semantic_version-2.10.0-py3.10.egg',
+ None,
+ {'*.pyc', '*.py', '*.pyd', '*.pyw', 'EGG-INFO', '*.cp310-win_amd64.pyd'},
+ 'DATA',
+ [])
