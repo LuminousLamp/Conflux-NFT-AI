@@ -39,5 +39,3 @@ def GetImage(text, style, apikey, secretkey):
     
     
     return selected_image
-
-# GetImage('','油画','AWla1UImVSbRhtNF7hE0VYv0fekwm9X2','7GB8HPKoV0GvzjyTPTReFffBSu9k93yd')

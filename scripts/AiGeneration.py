@@ -1,7 +1,7 @@
 import window
 import tkinter
 
-
+animation_photo = None
 imgOpen = None
 img_png = None
 imgOpen2 = None
