@@ -14,82 +14,10 @@ import webbrowser
 import re
 import random
 import json
-
-class OptionWidget:
-    def __init__(self, window, mode:str, name:str, label_text:str, initial_value = ''):
-        self.name:str = name
-        self.mode:str = mode
-        self.option_frame = ttkbootstrap.Frame(window.frame_options)
-        self.variable = ttkbootstrap.StringVar()
-        self.variable.set(initial_value)
-        self.input = ttkbootstrap.Entry(self.option_frame, textvariable=self.variable, width=30)
-        # self.input = ttkbootstrap.ttk.Combobox(self.option_frame, bootstyle="default", width=16, state="readonly", values=combobox_parameter, textvariable=self.variable)
-        self.input.bind('<Key>', self.inputStyle2Default)
-        self.label = ttkbootstrap.Label(self.option_frame, text=label_text)
-
-    
-    def pack(self):
-        self.label.pack(anchor=ttkbootstrap.N, padx=4,pady=0)
-        self.input.pack(anchor=ttkbootstrap.N, padx=4,pady=4)
-        self.option_frame.pack(anchor=ttkbootstrap.W,side=ttkbootstrap.LEFT, padx = 4, pady=4,)
-
-    def pack_forget(self):
-        self.label.pack_forget()
-        self.input.pack_forget()
-        self.option_frame.pack_forget()
-    
-    def inputStyle2Danger(self,*a):
-        self.input.config(bootstyle='danger')
-    
-    def inputStyle2Default(self,*a):
-        self.input.config(bootstyle='default')
-    
-    def getValue(self):
-        return self.variable.get()
-    
-    def setValue(self, newvalue:str):
-        self.variable.set(newvalue)
-
-    def updateLabel(self, newlabel:str):
-        self.label.config(text=newlabel)
+from optionwidget import *
+from about import *
 
 
-class OptionWidget_C(OptionWidget):
-    def __init__(self, window, mode:str, name:str, label_text:str, combobox_parameter:list[str], initial_value = ''):
-        super().__init__(window, mode, name, label_text, initial_value)
-        self.parameter:str = combobox_parameter
-        self.input = ttkbootstrap.ttk.Combobox(self.option_frame, bootstyle="default", width=16, state="readonly", values=combobox_parameter, textvariable=self.variable)
-        self.input.bind('<<ComboboxSelected>>', self.inputStyle2Default)
-    
-    def setValue(self, newvalue:tuple[str]):
-        self.input.config(values=newvalue)
-        self.variable.set('')
-
-
-
-class Mode:
-    def __init__(self, window, name:str, style:str, index:int):
-        self.name:str = name
-        self.widgets:list[OptionWidget| OptionWidget_C] = []
-        self.style:str = style
-        self.index:int = index
-        self.radiobutton = ttkbootstrap.Radiobutton(window.frame_mode_selection, text=name, value=self.index, variable=window.mode_selection_variable, command=lambda: window.switchMode(self))
-        self.radiobutton.pack(anchor=ttkbootstrap.N, padx=4,pady=2)
-        # self.mode_selection_button_default = ttkbootstrap.Radiobutton(self.frame_mode_selection, text='一般模式', value=0, variable=self.mode_selection_variable, command=self.toDefaultMode)
-    
-    def addWidget(self, widget:OptionWidget):
-        self.widgets.append(widget)
-    
-    def addWidgets(self, widgets:list[OptionWidget]):
-        self.widgets = self.widgets + widgets
-
-    def pack(self):
-        for widget in self.widgets:
-            widget.pack()
-
-    def pack_forget(self):
-        for widget in self.widgets:
-            widget.pack_forget()
 
 
 class Window:
@@ -100,15 +28,23 @@ class Window:
         with open('..\\util\\data.json','r',encoding='utf-8')as fp:
             data = json.load(fp)
 
+            self.provided_keys = data["provided_keys"]
+            self.style = data["style"]
+            self.style_selected = None
+            self.advanced_style = data["advanced_style"]
+            self.advanced_style_adopted = None
+            self.guide_text:str = data["guide_text"]
+            self.guide_text_selected = None
+            self.riddle = data["riddle"]
+        
+        with open('..\\util\\animal.txt','r',encoding='utf-8')as fp2:
+            self.animal:list[str] =[]
+            alllines = fp2.readlines()
+            for x in alllines:
+                string = x[0:(x.find('\t'))]
+                self.animal.append(string)
+            self.animal_adopted = None
 
-        self.provided_keys = data["provided_keys"]
-        self.style = data["style"]
-        self.style_selected = None
-        self.advanced_style = data["advanced_style"]
-        self.advanced_style_adopted = None
-        self.guide_text:str = data["guide_text"]
-        self.guide_text_selected = None
-        self.riddle = data["riddle"]
 
         self.prompt = None
         self.wenxinAK_text = None
@@ -123,7 +59,6 @@ class Window:
         self.root.geometry('750x520')
         self.root.maxsize(750,520)
         self.root.minsize(750,520)
-        self.window_style = Style(theme='lumen')
 
         ###############################
         # 顶框
@@ -132,7 +67,7 @@ class Window:
         self.frame_top = ttkbootstrap.Frame(self.frame_root, )
         self.title = ttkbootstrap.Label(self.frame_top, text = '绷不住了',font=('Copperplate Gothic Bold', 25))
         self.button_login = ttkbootstrap.Button(self.frame_top, text='登录', width = 8, command=self.onLogin)
-        self.button_about = ttkbootstrap.Button(self.frame_top, text='关于', width=8, command=self.onAbout)
+        self.button_about = ttkbootstrap.Button(self.frame_top, text='关于', width=8, command=lambda: AboutWindow(self, """绷不住了 1.0.0\n陈一艺 陈栩颖 梁而道\n©2022"""))
         self.userinfo_variable = ttkbootstrap.StringVar()
         self.userinfo_label = ttkbootstrap.Label(self.frame_top, textvariable=self.userinfo_variable)
         self.horizontal_line = ttkbootstrap.ttk.Separator(self.root, orient=ttkbootstrap.HORIZONTAL)
@@ -146,7 +81,6 @@ class Window:
         self.mode_selection_variable = ttkbootstrap.IntVar()
         self.mode_selection_dict = {0: 'default', 1: 'midautumn', 2:'diary'}
         self.mode_selection_variable.set(0)
-
         self.vertical_line = ttkbootstrap.ttk.Separator(self.frame_options, orient=ttkbootstrap.VERTICAL)
 
         
@@ -218,26 +152,29 @@ class Window:
         
         self.frame_root.pack(padx = 20, pady = 10)
 
-        ###################################
-        # 事件绑定
-        self.root.protocol('WM_DELETE_WINDOW',self.quitRootWindow)
 
         ##############################
         # 控件相关
-        self.mode_autumn = Mode(self,'autumn','united',1)
         self.mode_default = Mode(self,'default','lumen',0)
-        # self.mode_diary = Mode('diary', 'lumen')
-        self.mode_list = [self.mode_autumn,self.mode_default]
+        self.mode_autumn = Mode(self,'autumn','united',1)
+        self.mode_diary = Mode(self,'diary', 'minty', 2)
+        self.mode_list = [self.mode_default,self.mode_autumn,self.mode_diary]
         self.mode_now = None
 
-        self.w_style = OptionWidget_C(self, 'global', 'style', '风格', self.style,'')
+        self.w_style = OptionWidget_C(self, 'global', 'style', '风格', self.style)
         self.w_advancedstyle = OptionWidget_C(self, 'global', 'advancedstyle', '进阶风格', self.advanced_style_adopted)
-        self.w_guidedinput = OptionWidget(self, 'default', 'guidedinput', self.guide_text_selected)
-        self.w_riddle = OptionWidget_C(self, 'autumn', 'riddle', '选一个灯谜！' , self.riddle)
-        
+        self.w_guidedinput = OptionWidget(self, 'default', 'guidedinput', self.guide_text_selected,'',34)
+        self.w_riddle = OptionWidget_C(self, 'autumn', 'riddle', '选一个灯谜！' , self.riddle,'',32)
+        self.w_mood = OptionWidget(self,'diary', 'mood','一个词描述你的心情',)
+        self.w_animal = OptionWidget_C(self,'diary','animal','你喜欢的动物', self.animal, state='normal')
+
         self.mode_default.addWidgets([self.w_style, self.w_advancedstyle, self.w_guidedinput])
         self.mode_autumn.addWidgets([self.w_style, self.w_advancedstyle, self.w_riddle])
+        self.mode_diary.addWidgets([self.w_style, self.w_advancedstyle, self.w_mood, self.w_animal])
 
+        ###################################
+        # 其他
+        self.root.protocol('WM_DELETE_WINDOW',self.quitRootWindow)
         self.switchMode(self.selectModeByName('default'))
         self.updateParameters()
 
@@ -271,6 +208,7 @@ class Window:
         self.selectAdvancedStyle()
         self.selectGuideText()
         self.selectAKSK()
+        self.selectAnimal()
 
     def selectAdvancedStyle(self):
         number = random.randint(4,6)
@@ -288,38 +226,12 @@ class Window:
         self.wenxinSK_text = selected_pair["sk"]
         self.wenxinAK_variable.set(self.wenxinAK_text)
         self.wenxinSK_variable.set(self.wenxinSK_text)
-
-
-    ##############################################
-    # 关于页面相关
-
-    def onAbout(self):
-        self.root.attributes("-disabled", 1)
-        # 开设新窗口
-        self.about_window = ttkbootstrap.Toplevel(self.root)
-        self.about_window.title('关于')
-        self.about_window.geometry('300x120')
-        self.about_window.maxsize(300,120)
-        self.about_window.minsize(300,120)
-        self.about_window.focus_force()
-        # 控件
-        about_text = """绷不住了 1.0.0\n陈一艺 陈栩颖 梁而道\n©2022"""
-
-        self.frame_about_window =ttkbootstrap.Frame(self.about_window,)
-        self.about_title_label = ttkbootstrap.Label(self.frame_about_window, text='关于',bootstyle='primary',font=('Microsoft Yahei',12))
-        self.about_label = ttkbootstrap.Label(self.frame_about_window, text=about_text, bootstyle='default')
-        # 打包
-        self.about_title_label.pack(padx=5,pady=4)
-        self.about_label.pack(padx=5,pady=4)
-        self.frame_about_window.pack(padx=5,pady=4)
-
-        self.about_window.protocol('WM_DELETE_WINDOW',self.quitAboutWindow)
-        
-
-    def quitAboutWindow(self):
-        self.root.attributes("-disabled", 0)
-        self.about_window.destroy()
     
+    def selectAnimal(self):
+        number = random.randint(8,10)
+        self.animal_adopted = tuple(random.sample(self.animal, number))
+        self.w_animal.setValue(self.animal_adopted)
+
 
     ##############################################
     # 登入相关
@@ -403,7 +315,6 @@ class Window:
     # 图片生成相关
 
     def generatePrompt(self):
-        mode = self.mode_now
         for widget in self.mode_now.widgets:
             if widget is OptionWidget_C:
                 if widget.getValue() not in widget.paramater:
