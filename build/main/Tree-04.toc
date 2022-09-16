@@ -1,7 +1,0 @@
-('c:\\users\\led\\appdata\\local\\programs\\python\\python310\\lib\\site-packages\\cfx_utils-1.0.0b6-py3.10.egg',
- None,
- {'*.pyd', '*.cp310-win_amd64.pyd', '*.py', '*.pyw', 'EGG-INFO', '*.pyc'},
- 'DATA',
- [('cfx_typing\\py.typed',
-   'c:\\users\\led\\appdata\\local\\programs\\python\\python310\\lib\\site-packages\\cfx_utils-1.0.0b6-py3.10.egg\\cfx_typing\\py.typed',
-   'DATA')])

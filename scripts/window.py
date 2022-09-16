@@ -123,7 +123,7 @@ class Window:
         self.frame_share = ttkbootstrap.LabelFrame(self.frame_generate_and_share, text='上链', bootstyle='primary')
         self.frame_share_button = ttkbootstrap.Frame(self.frame_share)
         self.button_tochain = ttkbootstrap.Button(self.frame_share_button, text='铸造',width=12, command= self.toChain, state = ttkbootstrap.DISABLED)
-        self.button_share = ttkbootstrap.Button(self.frame_share_button, text='分享', width=12, command= lambda: share.ShareWindow(self, self.mode_now), state=ttkbootstrap.DISABLED)
+        self.button_share = ttkbootstrap.Button(self.frame_share_button, text='保存', width=12, command= lambda: share.ShareWindow(self, self.mode_now), state=ttkbootstrap.DISABLED)
         self.feedback_label = ttkbootstrap.Label(self.frame_share, text='请先登录', bootstyle='secondary')
 
         ###################################

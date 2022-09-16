@@ -1,39 +1,28 @@
-# NFT
+# 芒了个盲NFT生成器
 
 #### 介绍
-{**以下是 Gitee 平台说明，您可以替换此简介**
-Gitee 是 OSCHINA 推出的基于 Git 的代码托管平台（同时支持 SVN）。专为开发者提供稳定、高效、安全的云端软件开发协作平台
-无论是个人、团队、或是企业，都能够用 Gitee 实现代码托管、项目管理、协作开发。企业项目请看 [https://gitee.com/enterprises](https://gitee.com/enterprises)}
 
-#### 软件架构
-软件架构说明
+“芒了个盲NFT生成器”是团队 CCL 在 Conflux 北斗计划2022·天玑区块链创业营活动中的比赛作品。程序以区块链技术为依托，结合当下流行的NFT铸币和AI生图两大热点话题，让你可以结合当下心情和节日、发挥创意，随机创造自己的NFT图片，并与他人分享。
 
+#### 团队成员
+
+| 成员  | 学校     | 年级  | 联系方式                   |
+| --- | ------ | --- | ---------------------- |
+| 陈一艺 | 中国人民大学 | 大二  | cheyi@ruc.edu.cn       |
+| 梁而道 | 上海交通大学 | 大二  | liangerdao@sjtu.edu.cn |
+| 陈栩颖 | 南开大学   | 大二  | zqcxy0831@163.com      |
 
 #### 安装教程
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+clone本repo，打开 `dist/AIGeneration.exe` 即可运行程序。
 
 #### 使用说明
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
-
-#### 参与贡献
-
-1.  Fork 本仓库
-2.  新建 Feat_xxx 分支
-3.  提交代码
-4.  新建 Pull Request
+1. AI生图以文心 ERNIE-ViLG 大模型为引擎，需要输入 API key 以生图。程序提供默认 API key，你也可以在[这里](https://wenxin.baidu.com/moduleApi/key)获取 API key。
+2. 生成器有一般模式、猜灯谜、团圆中秋、心情日记四个模式。
+3. 要上链请点击“登录”按钮输入 Conflux 测试网账号公钥。
+4. 生成图片后，你可以点击“保存”保存当前 NFT 图片到本地。
 
 
-#### 特技
 
-1.  使用 Readme\_XXX.md 来支持不同的语言，例如 Readme\_en.md, Readme\_zh.md
-2.  Gitee 官方博客 [blog.gitee.com](https://blog.gitee.com)
-3.  你可以 [https://gitee.com/explore](https://gitee.com/explore) 这个地址来了解 Gitee 上的优秀开源项目
-4.  [GVP](https://gitee.com/gvp) 全称是 Gitee 最有价值开源项目，是综合评定出的优秀开源项目
-5.  Gitee 官方提供的使用手册 [https://gitee.com/help](https://gitee.com/help)
-6.  Gitee 封面人物是一档用来展示 Gitee 会员风采的栏目 [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
+©2022 CCL.

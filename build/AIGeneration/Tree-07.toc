@@ -1,5 +1,5 @@
-('c:\\users\\led\\appdata\\local\\programs\\python\\python310\\lib\\site-packages\\eth_tester-0.7.0b1-py3.10.egg',
+('c:\\users\\led\\appdata\\local\\programs\\python\\python310\\lib\\site-packages\\cfx_account-0.1.0b4-py3.10.egg',
  None,
- {'*.py', '*.pyw', '*.cp310-win_amd64.pyd', '*.pyc', '*.pyd', 'EGG-INFO'},
+ {'*.pyw', '*.pyd', '*.pyc', '*.cp310-win_amd64.pyd', 'EGG-INFO', '*.py'},
  'DATA',
  [])
